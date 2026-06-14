@@ -31,8 +31,16 @@ COIN_NAMES = {
     "DOGEUSDT": "Dogecoin",
 }
 
-INTERVAL        = "1h"
+# BIST hisseleri (Yahoo Finance sembolleri, ".IS" ekli). Sinyal-only: Midas'tan elle uygulanir.
+BIST_SYMBOLS  = ["GARAN.IS", "AKBNK.IS", "ISCTR.IS", "THYAO.IS", "ASELS.IS",
+                 "KCHOL.IS", "TUPRS.IS", "SISE.IS", "EREGL.IS", "BIMAS.IS"]
+BIST_INTERVAL = "1h"     # BIST icin saatlik mum (ucretsiz veride en dengeli)
+BIST_RANGE    = "1mo"    # son 1 ay
+
+INTERVAL        = "15m"     # mum periyodu (15 dk). Sakin mod icin "1h"
 KLINES_LIMIT    = 200
+_IVMIN          = {"1m": 1, "5m": 5, "15m": 15, "30m": 30, "1h": 60, "4h": 240}.get(INTERVAL, 60)
+LOOKBACK_24H    = max(2, round(24 * 60 / _IVMIN))   # ~24 saatlik geri bakis (mum sayisi)
 EMA_FAST        = 20
 EMA_SLOW        = 50
 RSI_PERIOD      = 14
@@ -98,6 +106,41 @@ def compute_indicators(df):
         "rsi": float(rsi.iloc[-1]),
         "atr": float(atr.iloc[-1]),
     }
+
+
+# =============================== BIST (Yahoo, sinyal-only) ===============================
+def fetch_yahoo(symbol, interval=BIST_INTERVAL, rng=BIST_RANGE):
+    r = requests.get(f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}",
+                     params={"interval": interval, "range": rng},
+                     headers={"User-Agent": "Mozilla/5.0"}, timeout=20)
+    r.raise_for_status()
+    res = r.json()["chart"]["result"][0]
+    q = res["indicators"]["quote"][0]
+    df = pd.DataFrame({"open": q["open"], "high": q["high"],
+                       "low": q["low"], "close": q["close"]}).dropna().reset_index(drop=True)
+    return df
+
+
+def bist_signals():
+    """Her BIST hissesi icin guncel sinyal (AL / SAT-cik / bekle). Emir gondermez."""
+    out = []
+    for sym in BIST_SYMBOLS:
+        name = sym.replace(".IS", "")
+        try:
+            df = fetch_yahoo(sym)
+            if len(df) < EMA_SLOW + 2:
+                out.append(f"{name}  ·  yeterli veri yok"); continue
+            ind = compute_indicators(df)
+            if ind["ema_fast"] > ind["ema_slow"] and RSI_FLOOR <= ind["rsi"] <= RSI_CEIL:
+                out.append(f"🟢 {name}: AL sinyali (trend yukarı, RSI {ind['rsi']:.0f})")
+            elif ind["ema_fast"] < ind["ema_slow"]:
+                out.append(f"🔴 {name}: SAT/çık uyarısı (trend aşağı)")
+            else:
+                out.append(f"⚪ {name}: bekle (RSI {ind['rsi']:.0f})")
+        except Exception as e:
+            print(f"{sym} BIST veri hatası: {e}")
+            out.append(f"{name}  ·  veri alınamadı")
+    return out
 
 
 # =============================== KARAR MANTIGI ===============================
@@ -252,8 +295,8 @@ def main():
         try:
             df = fetch_klines(sym)
             data[sym] = compute_indicators(df)
-            if sym == "BTCUSDT" and len(df) > 25:
-                btc_change = (df["close"].iloc[-1] / df["close"].iloc[-25] - 1) * 100
+            if sym == "BTCUSDT" and len(df) > LOOKBACK_24H:
+                btc_change = (df["close"].iloc[-1] / df["close"].iloc[-1 - LOOKBACK_24H] - 1) * 100
         except Exception as e:
             print(f"{sym} veri hatası: {e}")
 
@@ -262,7 +305,8 @@ def main():
 
     risk, risk_detail = global_risk_state(btc_change)
     fee = FEE_PCT / 100.0
-    cash = meta["cash"]
+    cash = meta["cash"]            # çalışma başı nakit (özet satırı için)
+    avail = cash                   # işlem bütçesi (döngü içinde değişir)
 
     positions_val = sum((state.get(s) or {}).get("qty", 0.0) * data[s]["price"]
                         for s in data if (state.get(s) or {}).get("qty", 0.0) > 0)
@@ -291,7 +335,7 @@ def main():
                 if DRY_RUN:
                     acts.append(f"🔴 {base}: SATARDIM — {why}  (K/Z %{pnl:+.1f})")
                 else:
-                    cash += st["qty"] * ind["price"] * (1 - fee)
+                    avail += st["qty"] * ind["price"] * (1 - fee)
                     acts.append(f"🔴 {base}: SATILDI — {why}  (K/Z %{pnl:+.1f})")
                     st.update({"in_position": False, "entry": None, "high": None,
                                "qty": 0.0, "last_trade": time.time()})
@@ -318,28 +362,31 @@ def main():
             waits.append(f"{base}  ·  ATR sıfır, atlandı"); continue
         qty = (equity * RISK_PER_TRADE) / stop_dist
         cost = qty * ind["price"] * (1 + fee)
-        if cost > cash * 0.95:
-            qty = (cash * 0.95) / (ind["price"] * (1 + fee))
+        if cost > avail * 0.95:
+            qty = (avail * 0.95) / (ind["price"] * (1 + fee))
             cost = qty * ind["price"] * (1 + fee)
         if qty * ind["price"] < MIN_TRADE_USDT:
             waits.append(f"{base}  ·  sinyal var ama nakit yetmiyor"); continue
 
         if DRY_RUN:
             acts.append(f"🟢 {base}: ALIRDIM — {qty:.6f} @ {ind['price']:.4f}  (~{cost:.0f} USDT)")
+            avail -= cost           # bütçeyi ve 5-pozisyon limitini gözet (state'e yazılmaz)
+            open_positions += 1
         else:
-            cash -= cost
+            avail -= cost
             st.update({"in_position": True, "entry": ind["price"], "high": ind["price"],
                        "qty": qty, "last_trade": time.time()})
             open_positions += 1
             acts.append(f"🟢 {base}: ALINDI — {qty:.6f} @ {ind['price']:.4f}  (~{cost:.0f} USDT)")
 
-    meta["cash"] = cash
-    save_state(state)
+    if not DRY_RUN:
+        meta["cash"] = avail
+        save_state(state)
 
     news_status = "açık (Gemini)" if GEMINI_KEY else "KAPALI (Gemini anahtarı eklenmemiş)"
     rflag = {"NORMAL": "🟢", "ELEVATED": "🟠", "HIGH": "🔴"}.get(risk, "⚪")
 
-    out = [f"🤖 KRİPTO BOT — {mode}",
+    out = [f"🤖 KRİPTO BOT — {mode}  ·  {INTERVAL} mum",
            f"{rflag} Küresel risk: {risk}   ({risk_detail})",
            f"🧠 Haber/analiz katmanı: {news_status}",
            f"💰 Portföy ≈ {equity:,.0f} USDT   (nakit {cash:,.0f} + pozisyon {positions_val:,.0f})",
@@ -352,6 +399,10 @@ def main():
         out.append("\n📦 Elde tutulanlar\n" + "\n".join(holds))
     if waits:
         out.append(f"\n⏳ Şu an alım yok ({len(waits)} coin)\n" + "\n".join(waits))
+
+    bist = bist_signals()
+    if bist:
+        out.append("\n📈 BİST sinyalleri (Midas'tan elle uygula)\n" + "\n".join(bist))
 
     report = "\n".join(out)
     notify(report); print(report)
