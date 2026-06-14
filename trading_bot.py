@@ -103,19 +103,19 @@ def compute_indicators(df):
 # =============================== KARAR MANTIGI ===============================
 def want_to_buy(ind, risk_state):
     if risk_state == "HIGH":
-        return False, "kuresel risk YUKSEK"
+        return False, "küresel risk YÜKSEK"
     if ind["ema_fast"] <= ind["ema_slow"]:
-        return False, "trend asagi (EMA20<EMA50)"
+        return False, "trend aşağı (EMA20<EMA50)"
     if ind["rsi"] < RSI_FLOOR:
-        return False, f"RSI zayif ({ind['rsi']:.0f})"
+        return False, f"RSI zayıf ({ind['rsi']:.0f})"
     if ind["rsi"] > RSI_CEIL:
-        return False, f"RSI asiri alim ({ind['rsi']:.0f})"
-    return True, "trend yukari + RSI uygun"
+        return False, f"RSI aşırı alım ({ind['rsi']:.0f})"
+    return True, "trend yukarı + RSI uygun"
 
 
 def want_to_sell(ind, high_since_entry):
     if ind["ema_fast"] < ind["ema_slow"]:
-        return True, "trend dondu (EMA20<EMA50)"
+        return True, "trend döndü (EMA20<EMA50)"
     stop = high_since_entry - ATR_STOP_MULT * ind["atr"]
     if ind["price"] <= stop:
         return True, f"trailing stop ({stop:.4f})"
@@ -241,8 +241,8 @@ def save_state(state):
 
 # =============================== ANA AKIS (KAGIT PORTFOY) ===============================
 def main():
-    dry = " (DENEME: sadece rapor, portfoy degismez)" if DRY_RUN else ""
-    print(f"=== Bot calisiyor{dry} ===")
+    mode = "DENEME (sadece rapor, portföy değişmez)" if DRY_RUN else "CANLI kağıt-portföy"
+    print(f"=== Bot çalışıyor — {mode} ===")
 
     state = load_state()
     meta = state.setdefault("_meta", {"cash": STARTING_CASH, "peak_equity": STARTING_CASH})
@@ -255,10 +255,10 @@ def main():
             if sym == "BTCUSDT" and len(df) > 25:
                 btc_change = (df["close"].iloc[-1] / df["close"].iloc[-25] - 1) * 100
         except Exception as e:
-            print(f"{sym} veri hatasi: {e}")
+            print(f"{sym} veri hatası: {e}")
 
     if not data:
-        notify("Veri cekilemedi (fiyat verisine erisilemiyor)."); print("Veri yok."); return
+        notify("⚠️ Veri çekilemedi (fiyat verisine erişilemiyor)."); print("Veri yok."); return
 
     risk, risk_detail = global_risk_state(btc_change)
     fee = FEE_PCT / 100.0
@@ -273,10 +273,7 @@ def main():
     halt_new = dd <= -MAX_DRAWDOWN_HALT
     open_positions = sum(1 for s in SYMBOLS if (state.get(s) or {}).get("qty", 0.0) > 0)
 
-    lines = [f"Kuresel risk: {risk}  ({risk_detail})",
-             f"Nakit {cash:.0f} | pozisyon {positions_val:.0f} | toplam ~{equity:.0f} USDT "
-             f"(tepe {meta['peak_equity']:.0f}, dusus {dd*100:.1f}%)"
-             + ("  YENI ALIM DURDU" if halt_new else "")]
+    acts, holds, waits = [], [], []      # işlemler / elde tutulanlar / bekleyenler
 
     for sym in SYMBOLS:
         if sym not in data:
@@ -288,57 +285,75 @@ def main():
 
         if in_pos:
             st["high"] = max(st.get("high") or ind["price"], ind["price"])
+            pnl = (ind["price"] / st["entry"] - 1) * 100 if st["entry"] else 0.0
             sell, why = want_to_sell(ind, st["high"])
             if sell:
                 if DRY_RUN:
-                    lines.append(f"[SAT-deneme] {base}: {why} @ {ind['price']:.4f}")
+                    acts.append(f"🔴 {base}: SATARDIM — {why}  (K/Z %{pnl:+.1f})")
                 else:
                     cash += st["qty"] * ind["price"] * (1 - fee)
-                    pnl = (ind["price"] / st["entry"] - 1) * 100 if st["entry"] else 0.0
-                    lines.append(f"[SATILDI] {base}: {why} @ {ind['price']:.4f} (K/Z {pnl:+.1f}%)")
+                    acts.append(f"🔴 {base}: SATILDI — {why}  (K/Z %{pnl:+.1f})")
                     st.update({"in_position": False, "entry": None, "high": None,
                                "qty": 0.0, "last_trade": time.time()})
                     open_positions -= 1
             else:
-                lines.append(f"[tut] {base} (RSI {ind['rsi']:.0f})")
+                holds.append(f"{base}:  K/Z %{pnl:+.1f}  ·  RSI {ind['rsi']:.0f}")
             continue
 
         buy, why = want_to_buy(ind, risk)
         if not buy:
-            lines.append(f"- {base}: alim yok ({why})"); continue
+            waits.append(f"{base}  ·  {why}"); continue
         if halt_new:
-            lines.append(f"- {base}: sinyal var ama dusus limiti aktif"); continue
+            waits.append(f"{base}  ·  sinyal var ama düşüş limiti aktif"); continue
         if open_positions >= MAX_POSITIONS:
-            lines.append(f"- {base}: sinyal var ama pozisyon limiti dolu"); continue
+            waits.append(f"{base}  ·  sinyal var ama pozisyon limiti dolu"); continue
         if time.time() - st.get("last_trade", 0) < COOLDOWN_HOURS * 3600:
-            lines.append(f"- {base}: sinyal var ama cooldown"); continue
+            waits.append(f"{base}  ·  sinyal var ama bekleme süresinde"); continue
         neg, nreason = negative_news(COIN_NAMES.get(sym, base))
         if neg:
-            lines.append(f"- {base}: alim iptal, olumsuz haber ({nreason})"); continue
+            waits.append(f"{base}  ·  alım iptal: olumsuz haber ({nreason})"); continue
 
         stop_dist = ATR_STOP_MULT * ind["atr"]
         if stop_dist <= 0:
-            lines.append(f"- {base}: ATR sifir, atlandi"); continue
+            waits.append(f"{base}  ·  ATR sıfır, atlandı"); continue
         qty = (equity * RISK_PER_TRADE) / stop_dist
         cost = qty * ind["price"] * (1 + fee)
         if cost > cash * 0.95:
             qty = (cash * 0.95) / (ind["price"] * (1 + fee))
             cost = qty * ind["price"] * (1 + fee)
         if qty * ind["price"] < MIN_TRADE_USDT:
-            lines.append(f"- {base}: sinyal var ama nakit yetmiyor"); continue
+            waits.append(f"{base}  ·  sinyal var ama nakit yetmiyor"); continue
 
         if DRY_RUN:
-            lines.append(f"[AL-deneme] {base}: {why} | ~{qty:.6f} @ {ind['price']:.4f} (~{cost:.0f} USDT)")
+            acts.append(f"🟢 {base}: ALIRDIM — {qty:.6f} @ {ind['price']:.4f}  (~{cost:.0f} USDT)")
         else:
             cash -= cost
             st.update({"in_position": True, "entry": ind["price"], "high": ind["price"],
                        "qty": qty, "last_trade": time.time()})
             open_positions += 1
-            lines.append(f"[ALINDI] {base}: {why} | {qty:.6f} @ {ind['price']:.4f} (~{cost:.0f} USDT)")
+            acts.append(f"🟢 {base}: ALINDI — {qty:.6f} @ {ind['price']:.4f}  (~{cost:.0f} USDT)")
 
     meta["cash"] = cash
     save_state(state)
-    report = f"Kripto bot raporu{dry}\n" + "\n".join(lines)
+
+    news_status = "açık (Gemini)" if GEMINI_KEY else "KAPALI (Gemini anahtarı eklenmemiş)"
+    rflag = {"NORMAL": "🟢", "ELEVATED": "🟠", "HIGH": "🔴"}.get(risk, "⚪")
+
+    out = [f"🤖 KRİPTO BOT — {mode}",
+           f"{rflag} Küresel risk: {risk}   ({risk_detail})",
+           f"🧠 Haber/analiz katmanı: {news_status}",
+           f"💰 Portföy ≈ {equity:,.0f} USDT   (nakit {cash:,.0f} + pozisyon {positions_val:,.0f})",
+           f"📈 Tepe {meta['peak_equity']:,.0f}  ·  düşüş %{dd*100:.1f}"
+           + ("   ⛔ yeni alım durdu" if halt_new else "")]
+
+    if acts:
+        out.append("\n🔁 İşlemler\n" + "\n".join(acts))
+    if holds:
+        out.append("\n📦 Elde tutulanlar\n" + "\n".join(holds))
+    if waits:
+        out.append(f"\n⏳ Şu an alım yok ({len(waits)} coin)\n" + "\n".join(waits))
+
+    report = "\n".join(out)
     notify(report); print(report)
 
 
