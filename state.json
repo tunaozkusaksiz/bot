@@ -1,0 +1,76 @@
+{
+  "_meta": {
+    "cash": 10000.0,
+    "peak_equity": 10000.0
+  },
+  "BTCUSDT": {
+    "in_position": false,
+    "entry": null,
+    "high": null,
+    "qty": 0.0,
+    "last_trade": 0
+  },
+  "ETHUSDT": {
+    "in_position": false,
+    "entry": null,
+    "high": null,
+    "qty": 0.0,
+    "last_trade": 0
+  },
+  "SOLUSDT": {
+    "in_position": false,
+    "entry": null,
+    "high": null,
+    "qty": 0.0,
+    "last_trade": 0
+  },
+  "BNBUSDT": {
+    "in_position": false,
+    "entry": null,
+    "high": null,
+    "qty": 0.0,
+    "last_trade": 0
+  },
+  "XRPUSDT": {
+    "in_position": false,
+    "entry": null,
+    "high": null,
+    "qty": 0.0,
+    "last_trade": 0
+  },
+  "ADAUSDT": {
+    "in_position": false,
+    "entry": null,
+    "high": null,
+    "qty": 0.0,
+    "last_trade": 0
+  },
+  "AVAXUSDT": {
+    "in_position": false,
+    "entry": null,
+    "high": null,
+    "qty": 0.0,
+    "last_trade": 0
+  },
+  "LINKUSDT": {
+    "in_position": false,
+    "entry": null,
+    "high": null,
+    "qty": 0.0,
+    "last_trade": 0
+  },
+  "LTCUSDT": {
+    "in_position": false,
+    "entry": null,
+    "high": null,
+    "qty": 0.0,
+    "last_trade": 0
+  },
+  "DOGEUSDT": {
+    "in_position": false,
+    "entry": null,
+    "high": null,
+    "qty": 0.0,
+    "last_trade": 0
+  }
+}
