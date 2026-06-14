@@ -57,8 +57,8 @@ BINANCE_KEY     = os.getenv("BINANCE_API_KEY", "")
 BINANCE_SECRET  = os.getenv("BINANCE_API_SECRET", "")
 TG_TOKEN        = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TG_CHAT         = os.getenv("TELEGRAM_CHAT_ID", "")
-ANTHROPIC_KEY   = os.getenv("ANTHROPIC_API_KEY", "")   # opsiyonel (haber/risk katmani)
-ANTHROPIC_MODEL = "claude-haiku-4-5-20251001"
+GEMINI_KEY   = os.getenv("GEMINI_API_KEY", "")    # opsiyonel (haber/risk katmani)
+GEMINI_MODEL = "gemini-2.5-flash"                 # istersen "gemini-3.5-flash" yapabilirsin
 
 # Public market data: ABD IP'lerinde 451 vermeyen ayna uc nokta
 PUBLIC_KLINES_URL = "https://data-api.binance.vision/api/v3/klines"
@@ -190,28 +190,27 @@ def place_market(client, symbol, side, qty):
 
 
 # =============================== HABER / RISK (Claude) ===============================
-def claude_json(system, user):
-    if not ANTHROPIC_KEY:
+def gemini_json(system, user):
+    if not GEMINI_KEY:
         return None
     try:
+        url = ("https://generativelanguage.googleapis.com/v1beta/models/"
+               f"{GEMINI_MODEL}:generateContent")
         r = requests.post(
-            "https://api.anthropic.com/v1/messages",
-            headers={"x-api-key": ANTHROPIC_KEY,
-                     "anthropic-version": "2023-06-01",
-                     "content-type": "application/json"},
-            json={"model": ANTHROPIC_MODEL, "max_tokens": 300,
-                  "system": system,
-                  "messages": [{"role": "user", "content": user}]},
+            url,
+            headers={"x-goog-api-key": GEMINI_KEY, "Content-Type": "application/json"},
+            json={"systemInstruction": {"parts": [{"text": system}]},
+                  "contents": [{"parts": [{"text": user}]}],
+                  "generationConfig": {"temperature": 0, "maxOutputTokens": 300,
+                                       "responseMimeType": "application/json"}},
             timeout=30)
         r.raise_for_status()
-        data = r.json()
-        text = "".join(b.get("text", "") for b in data.get("content", [])
-                       if b.get("type") == "text").strip().strip("`")
+        text = r.json()["candidates"][0]["content"]["parts"][0]["text"].strip().strip("`")
         if text.lower().startswith("json"):
             text = text[4:].strip()
         return json.loads(text)
     except Exception as e:
-        print("Claude hatasi:", e)
+        print("Gemini hatasi:", e)
         return None
 
 
@@ -253,7 +252,7 @@ def global_risk_state(btc_change_24h):
 
     # 2) AI/haber temelli sinyal (opsiyonel)
     ai, reason = "NORMAL", ""
-    if ANTHROPIC_KEY:
+    if GEMINI_KEY:
         heads = gdelt_headlines('(war OR invasion OR conflict OR sanctions OR '
                                 '"central bank" OR "rate hike" OR crisis OR attack)')
         if heads:
@@ -261,7 +260,7 @@ def global_risk_state(btc_change_24h):
                    "judge CURRENT market risk for risk assets. Respond ONLY with JSON: "
                    '{"risk":"NORMAL|ELEVATED|HIGH","reason":"short"}. '
                    "HIGH = a major geopolitical/financial shock unfolding right now.")
-            res = claude_json(sys, "Headlines:\n- " + "\n- ".join(heads[:15]))
+            res = gemini_json(sys, "Headlines:\n- " + "\n- ".join(heads[:15]))
             if res and res.get("risk") in ("NORMAL", "ELEVATED", "HIGH"):
                 ai, reason = res["risk"], res.get("reason", "")
 
@@ -272,7 +271,7 @@ def global_risk_state(btc_change_24h):
 
 
 def negative_news(coin_name):
-    if not ANTHROPIC_KEY:
+    if not GEMINI_KEY:
         return False, ""
     heads = gdelt_headlines(f"{coin_name} crypto", maxrecords=10, timespan="1d")
     if not heads:
@@ -280,7 +279,7 @@ def negative_news(coin_name):
     sys = ("You classify crypto news. Given headlines about a coin, decide if there is MAJOR "
            "NEGATIVE news (hack, ban, lawsuit, exploit, delisting, fraud) that warrants avoiding "
            'a new buy now. Respond ONLY with JSON: {"negative":true|false,"reason":"short"}.')
-    res = claude_json(sys, f"Coin: {coin_name}\nHeadlines:\n- " + "\n- ".join(heads[:10]))
+    res = gemini_json(sys, f"Coin: {coin_name}\nHeadlines:\n- " + "\n- ".join(heads[:10]))
     if res and isinstance(res.get("negative"), bool):
         return res["negative"], res.get("reason", "")
     return False, ""
