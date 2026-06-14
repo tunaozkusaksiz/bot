@@ -31,7 +31,7 @@ jobs:
           BINANCE_API_SECRET: ${{ secrets.BINANCE_API_SECRET }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID:   ${{ secrets.TELEGRAM_CHAT_ID }}
-          ANTHROPIC_API_KEY:  ${{ secrets.ANTHROPIC_API_KEY }}
+          GEMINI_API_KEY:     ${{ secrets.GEMINI_API_KEY }}
           DRY_RUN:            ${{ vars.DRY_RUN }}
         run: python trading_bot.py
 
