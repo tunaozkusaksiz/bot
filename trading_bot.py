@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """
-Asama 1 - Kripto otomatik islem botu (Binance TESTNET / sahte para)
+Asama 1 - Kripto KAGIT (paper) ticaret botu
 
-- Canli (public) fiyat verisiyle EMA(20/50) + RSI + ATR sinyalleri uretir
-- Emirleri SADECE Binance testnet'e gonderir (gercek para yok)
-- Trailing ATR stop, pozisyon boyutlandirma, dusus (drawdown) emniyet salteri,
-  islem arasi bekleme (cooldown)
-- Opsiyonel: Claude API ile sirket haberi + kuresel risk katmani
-- Telegram'a ozet rapor atar
-- Durumu state.json'da tutar (GitHub Actions her calismada geri commit eder)
+- Canli fiyati Binance'in halka acik, cografi engeli OLMAYAN veri ucundan ceker
+  (data-api.binance.vision) -> GitHub Actions'ta sorunsuz calisir.
+- EMA(20/50) + RSI + ATR sinyalleri; trailing ATR stop; risk yonetimi;
+  dusus (drawdown) emniyet salteri; islem arasi bekleme (cooldown).
+- Borsaya BAGLANMAZ: alim-satim, kod icinde tutulan SAHTE bir portfoye islenir
+  (state.json'da nakit + pozisyonlar). Gercek para ya da borsa anahtari gerekmez.
+- Opsiyonel: Gemini API ile sirket haberi + kuresel risk katmani.
+- Telegram'a ozet rapor atar.
 
 UYARI: Bu bir demo/egitim aracidir, yatirim tavsiyesi degildir.
 """
@@ -16,51 +17,46 @@ UYARI: Bu bir demo/egitim aracidir, yatirim tavsiyesi degildir.
 import os
 import json
 import time
-import math
 import requests
 import pandas as pd
-import numpy as np
-from binance.client import Client
 
 # =============================== AYARLAR ===============================
-# Takip edilen kripto listesi (USDT pariteleri). Istedigini ekle/cikar.
 SYMBOLS = ["BTCUSDT", "ETHUSDT", "SOLUSDT", "BNBUSDT", "XRPUSDT",
            "ADAUSDT", "AVAXUSDT", "LINKUSDT", "LTCUSDT", "DOGEUSDT"]
 
-COIN_NAMES = {  # haber aramasi icin okunabilir isimler
+COIN_NAMES = {
     "BTCUSDT": "Bitcoin", "ETHUSDT": "Ethereum", "SOLUSDT": "Solana",
     "BNBUSDT": "BNB Binance", "XRPUSDT": "XRP Ripple", "ADAUSDT": "Cardano",
     "AVAXUSDT": "Avalanche", "LINKUSDT": "Chainlink", "LTCUSDT": "Litecoin",
     "DOGEUSDT": "Dogecoin",
 }
 
-INTERVAL        = "1h"    # sinyal mum periyodu
-KLINES_LIMIT    = 200     # gosterge gecmisi icin cekilecek mum sayisi
+INTERVAL        = "1h"
+KLINES_LIMIT    = 200
 EMA_FAST        = 20
 EMA_SLOW        = 50
 RSI_PERIOD      = 14
-RSI_FLOOR       = 45      # altinda alim yok (zayif momentum)
-RSI_CEIL        = 70      # ustunde alim yok (asiri alim)
+RSI_FLOOR       = 45
+RSI_CEIL        = 70
 ATR_PERIOD      = 14
-ATR_STOP_MULT   = 3.0     # trailing stop = en yuksek - 3*ATR
-RISK_PER_TRADE  = 0.02    # islem basina sermayenin %2'si riske edilir
-MAX_POSITIONS   = 5       # ayni anda en fazla pozisyon
-COOLDOWN_HOURS  = 6       # ayni coin'de iki islem arasi minimum sure
-MAX_DRAWDOWN_HALT = 0.20  # equity tepe noktasindan %20 dusunce yeni alim durur
-MIN_NOTIONAL_FALLBACK = 10.0  # USDT
+ATR_STOP_MULT   = 3.0
+RISK_PER_TRADE  = 0.02
+MAX_POSITIONS   = 5
+COOLDOWN_HOURS  = 6
+MAX_DRAWDOWN_HALT = 0.20
+STARTING_CASH   = 10000.0   # sahte baslangic sermayesi (USDT)
+FEE_PCT         = 0.10      # her islemde simule edilen komisyon (%)
+MIN_TRADE_USDT  = 10.0
 
 STATE_FILE = "state.json"
 DRY_RUN = os.getenv("DRY_RUN", "true").strip().lower() != "false"
 
-# --- Sirlar (GitHub Secrets'tan gelir) ---
-BINANCE_KEY     = os.getenv("BINANCE_API_KEY", "")
-BINANCE_SECRET  = os.getenv("BINANCE_API_SECRET", "")
-TG_TOKEN        = os.getenv("TELEGRAM_BOT_TOKEN", "")
-TG_CHAT         = os.getenv("TELEGRAM_CHAT_ID", "")
 GEMINI_KEY   = os.getenv("GEMINI_API_KEY", "")    # opsiyonel (haber/risk katmani)
 GEMINI_MODEL = "gemini-2.5-flash"                 # istersen "gemini-3.5-flash" yapabilirsin
+TG_TOKEN     = os.getenv("TELEGRAM_BOT_TOKEN", "")
+TG_CHAT      = os.getenv("TELEGRAM_CHAT_ID", "")
 
-# Public market data: ABD IP'lerinde 451 vermeyen ayna uc nokta
+# Halka acik, cografi engellenmeyen market-data ucu
 PUBLIC_KLINES_URL = "https://data-api.binance.vision/api/v3/klines"
 
 
@@ -70,9 +66,8 @@ def fetch_klines(symbol, interval=INTERVAL, limit=KLINES_LIMIT):
                      params={"symbol": symbol, "interval": interval, "limit": limit},
                      timeout=20)
     r.raise_for_status()
-    raw = r.json()
-    df = pd.DataFrame(raw, columns=["openTime", "open", "high", "low", "close", "volume",
-                                    "closeTime", "qav", "trades", "tbbav", "tbqav", "ignore"])
+    df = pd.DataFrame(r.json(), columns=["openTime", "open", "high", "low", "close", "volume",
+                                         "closeTime", "qav", "trades", "tbbav", "tbqav", "ignore"])
     for c in ["open", "high", "low", "close", "volume"]:
         df[c] = df[c].astype(float)
     return df
@@ -88,8 +83,8 @@ def compute_indicators(df):
     loss = (-delta).clip(lower=0.0)
     avg_gain = gain.ewm(alpha=1 / RSI_PERIOD, adjust=False).mean()
     avg_loss = loss.ewm(alpha=1 / RSI_PERIOD, adjust=False).mean()
-    rs = avg_gain / avg_loss          # avg_loss=0 & gain>0 -> inf -> RSI 100
-    rsi = (100 - (100 / (1 + rs))).fillna(50.0)  # 0/0 (duz piyasa) -> 50
+    rs = avg_gain / avg_loss
+    rsi = (100 - (100 / (1 + rs))).fillna(50.0)
 
     prev_close = close.shift(1)
     tr = pd.concat([(high - low), (high - prev_close).abs(), (low - prev_close).abs()],
@@ -127,69 +122,7 @@ def want_to_sell(ind, high_since_entry):
     return False, "tut"
 
 
-def position_size(equity, free_usdt, ind, step, min_notional):
-    stop_dist = ATR_STOP_MULT * ind["atr"]
-    if stop_dist <= 0:
-        return 0.0
-    risk_amount = equity * RISK_PER_TRADE
-    qty = risk_amount / stop_dist
-    cost = qty * ind["price"]
-    max_cost = free_usdt * 0.95
-    if cost > max_cost:
-        qty = max_cost / ind["price"]
-    qty = round_step(qty, step)
-    if qty * ind["price"] < max(min_notional, MIN_NOTIONAL_FALLBACK):
-        return 0.0
-    return qty
-
-
-def step_decimals(step):
-    s = f"{step:.10f}".rstrip("0")
-    return len(s.split(".")[1]) if "." in s else 0
-
-
-def round_step(qty, step):
-    if step and step > 0:
-        q = math.floor(qty / step) * step
-        return float(f"{q:.{step_decimals(step)}f}")
-    return float(f"{qty:.6f}")
-
-
-# =============================== BINANCE (TESTNET) ===============================
-def get_client():
-    c = Client(BINANCE_KEY, BINANCE_SECRET, testnet=True)
-    return c
-
-
-def get_balances(client):
-    acct = client.get_account()
-    return {b["asset"]: float(b["free"]) for b in acct["balances"]}
-
-
-def safe_filters(client, symbol):
-    """(tradable, stepSize, minNotional) - hata olursa guvenli varsayilan."""
-    try:
-        info = client.get_symbol_info(symbol)
-        if not info:
-            return False, 0.0, MIN_NOTIONAL_FALLBACK
-        tradable = info.get("status") == "TRADING"
-        step, min_n = 0.0, MIN_NOTIONAL_FALLBACK
-        for f in info.get("filters", []):
-            if f["filterType"] == "LOT_SIZE":
-                step = float(f["stepSize"])
-            if f["filterType"] in ("MIN_NOTIONAL", "NOTIONAL"):
-                min_n = float(f.get("minNotional", f.get("notional", MIN_NOTIONAL_FALLBACK)))
-        return tradable, step, min_n
-    except Exception as e:
-        print(f"{symbol} filtre hatasi: {e}")
-        return False, 0.0, MIN_NOTIONAL_FALLBACK
-
-
-def place_market(client, symbol, side, qty):
-    return client.create_order(symbol=symbol, side=side, type="MARKET", quantity=qty)
-
-
-# =============================== HABER / RISK (Claude) ===============================
+# =============================== HABER / RISK (Gemini) ===============================
 def gemini_json(system, user):
     if not GEMINI_KEY:
         return None
@@ -232,14 +165,12 @@ def fear_greed():
     try:
         r = requests.get("https://api.alternative.me/fng/", timeout=15)
         r.raise_for_status()
-        d = r.json()["data"][0]
-        return int(d["value"])
+        return int(r.json()["data"][0]["value"])
     except Exception:
         return None
 
 
 def global_risk_state(btc_change_24h):
-    # 1) Piyasa temelli sinyal (her zaman calisir)
     market = "NORMAL"
     if btc_change_24h is not None:
         if btc_change_24h <= -10:
@@ -250,7 +181,6 @@ def global_risk_state(btc_change_24h):
     if fg is not None and fg <= 15 and market == "NORMAL":
         market = "ELEVATED"
 
-    # 2) AI/haber temelli sinyal (opsiyonel)
     ai, reason = "NORMAL", ""
     if GEMINI_KEY:
         heads = gdelt_headlines('(war OR invasion OR conflict OR sanctions OR '
@@ -309,26 +239,14 @@ def save_state(state):
         json.dump(state, f, indent=2)
 
 
-# =============================== ANA AKIS ===============================
+# =============================== ANA AKIS (KAGIT PORTFOY) ===============================
 def main():
-    dry = " (DENEME: emir gonderilmez)" if DRY_RUN else ""
+    dry = " (DENEME: sadece rapor, portfoy degismez)" if DRY_RUN else ""
     print(f"=== Bot calisiyor{dry} ===")
 
-    if not (BINANCE_KEY and BINANCE_SECRET):
-        notify("HATA: Binance testnet anahtarlari yok (BINANCE_API_KEY/SECRET).")
-        print("HATA: Binance anahtarlari yok."); return
-
-    client = get_client()
-    try:
-        balances = get_balances(client)
-    except Exception as e:
-        notify(f"Binance testnet'e baglanilamadi: {e}")
-        print("Baglanti hatasi:", e); return
-
     state = load_state()
-    meta = state.setdefault("_meta", {"peak_equity": None})
+    meta = state.setdefault("_meta", {"cash": STARTING_CASH, "peak_equity": STARTING_CASH})
 
-    # Veri + gosterge
     data, btc_change = {}, None
     for sym in SYMBOLS:
         try:
@@ -340,113 +258,88 @@ def main():
             print(f"{sym} veri hatasi: {e}")
 
     if not data:
-        notify("Veri cekilemedi (borsa erisilemiyor olabilir)."); return
+        notify("Veri cekilemedi (fiyat verisine erisilemiyor)."); print("Veri yok."); return
 
     risk, risk_detail = global_risk_state(btc_change)
+    fee = FEE_PCT / 100.0
+    cash = meta["cash"]
 
-    # Equity + mevcut pozisyonlar
-    free_usdt = balances.get("USDT", 0.0)
-    holdings, equity = {}, free_usdt
-    for sym, ind in data.items():
-        qty = balances.get(sym.replace("USDT", ""), 0.0)
-        val = qty * ind["price"]
-        if val >= 1.0:
-            holdings[sym] = qty
-        equity += val
-
-    if meta["peak_equity"] is None or equity > meta["peak_equity"]:
+    positions_val = sum((state.get(s) or {}).get("qty", 0.0) * data[s]["price"]
+                        for s in data if (state.get(s) or {}).get("qty", 0.0) > 0)
+    equity = cash + positions_val
+    if meta.get("peak_equity") is None or equity > meta["peak_equity"]:
         meta["peak_equity"] = equity
     dd = (equity / meta["peak_equity"] - 1) if meta["peak_equity"] else 0.0
     halt_new = dd <= -MAX_DRAWDOWN_HALT
+    open_positions = sum(1 for s in SYMBOLS if (state.get(s) or {}).get("qty", 0.0) > 0)
 
     lines = [f"Kuresel risk: {risk}  ({risk_detail})",
-             f"Equity ~ {equity:.2f} USDT | tepe {meta['peak_equity']:.2f} | dusus {dd*100:.1f}%"
-             + ("  YENI ALIM DURDURULDU" if halt_new else "")]
-
-    open_positions = len(holdings)
+             f"Nakit {cash:.0f} | pozisyon {positions_val:.0f} | toplam ~{equity:.0f} USDT "
+             f"(tepe {meta['peak_equity']:.0f}, dusus {dd*100:.1f}%)"
+             + ("  YENI ALIM DURDU" if halt_new else "")]
 
     for sym in SYMBOLS:
         if sym not in data:
             continue
         ind, base = data[sym], sym.replace("USDT", "")
         st = state.setdefault(sym, {"in_position": False, "entry": None,
-                                    "high": None, "last_trade": 0})
-        in_pos = sym in holdings
+                                    "high": None, "qty": 0.0, "last_trade": 0})
+        in_pos = st.get("qty", 0.0) > 0
 
-        # Durum uzlastirma (gercek bakiye esastir)
         if in_pos:
-            st["in_position"] = True
-            st["entry"] = st.get("entry") or ind["price"]
             st["high"] = max(st.get("high") or ind["price"], ind["price"])
-        else:
-            st.update({"in_position": False, "entry": None, "high": None})
-
-        # --- SAT? ---
-        if in_pos:
             sell, why = want_to_sell(ind, st["high"])
             if sell:
-                _, step, _ = safe_filters(client, sym)
-                qty = round_step(holdings[sym], step)
                 if DRY_RUN:
                     lines.append(f"[SAT-deneme] {base}: {why} @ {ind['price']:.4f}")
-                elif qty > 0:
-                    try:
-                        place_market(client, sym, "SELL", qty)
-                        st.update({"in_position": False, "entry": None,
-                                   "high": None, "last_trade": time.time()})
-                        lines.append(f"[SATILDI] {base}: {why} @ {ind['price']:.4f}")
-                    except Exception as e:
-                        lines.append(f"[hata] {base} satis: {e}")
                 else:
-                    lines.append(f"{base}: satilacak miktar cok kucuk")
+                    cash += st["qty"] * ind["price"] * (1 - fee)
+                    pnl = (ind["price"] / st["entry"] - 1) * 100 if st["entry"] else 0.0
+                    lines.append(f"[SATILDI] {base}: {why} @ {ind['price']:.4f} (K/Z {pnl:+.1f}%)")
+                    st.update({"in_position": False, "entry": None, "high": None,
+                               "qty": 0.0, "last_trade": time.time()})
+                    open_positions -= 1
             else:
                 lines.append(f"[tut] {base} (RSI {ind['rsi']:.0f})")
             continue
 
-        # --- AL? ---
         buy, why = want_to_buy(ind, risk)
         if not buy:
-            lines.append(f"- {base}: alim yok ({why})")
-            continue
+            lines.append(f"- {base}: alim yok ({why})"); continue
         if halt_new:
-            lines.append(f"- {base}: sinyal var ama dusus limiti aktif")
-            continue
+            lines.append(f"- {base}: sinyal var ama dusus limiti aktif"); continue
         if open_positions >= MAX_POSITIONS:
-            lines.append(f"- {base}: sinyal var ama pozisyon limiti dolu")
-            continue
+            lines.append(f"- {base}: sinyal var ama pozisyon limiti dolu"); continue
         if time.time() - st.get("last_trade", 0) < COOLDOWN_HOURS * 3600:
-            lines.append(f"- {base}: sinyal var ama cooldown")
-            continue
+            lines.append(f"- {base}: sinyal var ama cooldown"); continue
         neg, nreason = negative_news(COIN_NAMES.get(sym, base))
         if neg:
-            lines.append(f"- {base}: alim iptal, olumsuz haber ({nreason})")
-            continue
-        tradable, step, min_n = safe_filters(client, sym)
-        if not tradable:
-            lines.append(f"- {base}: testnet'te islem gormuyor, atlandi")
-            continue
-        qty = position_size(equity, free_usdt, ind, step, min_n)
-        if qty <= 0:
-            lines.append(f"- {base}: sinyal var ama butce/min tutar yetmiyor")
-            continue
-        cost = qty * ind["price"]
-        if DRY_RUN:
-            lines.append(f"[AL-deneme] {base}: {why} | ~{qty} @ {ind['price']:.4f} (~{cost:.1f} USDT)")
-        else:
-            try:
-                place_market(client, sym, "BUY", qty)
-                st.update({"in_position": True, "entry": ind["price"],
-                           "high": ind["price"], "last_trade": time.time()})
-                free_usdt -= cost
-                open_positions += 1
-                lines.append(f"[ALINDI] {base}: {why} | {qty} @ {ind['price']:.4f} (~{cost:.1f} USDT)")
-            except Exception as e:
-                lines.append(f"[hata] {base} alis: {e}")
+            lines.append(f"- {base}: alim iptal, olumsuz haber ({nreason})"); continue
 
+        stop_dist = ATR_STOP_MULT * ind["atr"]
+        if stop_dist <= 0:
+            lines.append(f"- {base}: ATR sifir, atlandi"); continue
+        qty = (equity * RISK_PER_TRADE) / stop_dist
+        cost = qty * ind["price"] * (1 + fee)
+        if cost > cash * 0.95:
+            qty = (cash * 0.95) / (ind["price"] * (1 + fee))
+            cost = qty * ind["price"] * (1 + fee)
+        if qty * ind["price"] < MIN_TRADE_USDT:
+            lines.append(f"- {base}: sinyal var ama nakit yetmiyor"); continue
+
+        if DRY_RUN:
+            lines.append(f"[AL-deneme] {base}: {why} | ~{qty:.6f} @ {ind['price']:.4f} (~{cost:.0f} USDT)")
+        else:
+            cash -= cost
+            st.update({"in_position": True, "entry": ind["price"], "high": ind["price"],
+                       "qty": qty, "last_trade": time.time()})
+            open_positions += 1
+            lines.append(f"[ALINDI] {base}: {why} | {qty:.6f} @ {ind['price']:.4f} (~{cost:.0f} USDT)")
+
+    meta["cash"] = cash
     save_state(state)
     report = f"Kripto bot raporu{dry}\n" + "\n".join(lines)
-    notify(report)
-    print(report)
+    notify(report); print(report)
 
 
 if __name__ == "__main__":
