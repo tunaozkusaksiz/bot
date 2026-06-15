@@ -20,7 +20,7 @@
   "SOLUSDT": {
     "in_position": true,
     "entry": 71.17,
-    "high": 71.17,
+    "high": 71.28,
     "qty": 0.32034606284750355,
     "last_trade": 1781515906.8739128
   },
@@ -34,7 +34,7 @@
   "XRPUSDT": {
     "in_position": true,
     "entry": 1.1849,
-    "high": 1.1849,
+    "high": 1.1864,
     "qty": 379.15561101564043,
     "last_trade": 1781515914.8011124
   },
