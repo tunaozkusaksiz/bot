@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "cash": 495.62683571289745,
+    "cash": 24.781341785644884,
     "peak_equity": 10390.48381505795
   },
   "BTCUSDT": {
@@ -20,7 +20,7 @@
   "SOLUSDT": {
     "in_position": true,
     "entry": 74.26,
-    "high": 74.35,
+    "high": 74.36,
     "qty": 126.68330697776496,
     "last_trade": 1781594174.3358872
   },
@@ -46,11 +46,11 @@
     "last_trade": 1781557296.3910403
   },
   "AVAXUSDT": {
-    "in_position": false,
-    "entry": null,
-    "high": null,
-    "qty": 0.0,
-    "last_trade": 1781562667.3401165
+    "in_position": true,
+    "entry": 6.918,
+    "high": 6.918,
+    "qty": 67.99293420185663,
+    "last_trade": 1781596897.759208
   },
   "LINKUSDT": {
     "in_position": false,
