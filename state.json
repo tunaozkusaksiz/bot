@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "cash": 1.1977575928017572,
+    "cash": 9302.538440907565,
     "peak_equity": 10390.48381505795
   },
   "BTCUSDT": {
@@ -46,11 +46,11 @@
     "last_trade": 1781557296.3910403
   },
   "AVAXUSDT": {
-    "in_position": true,
-    "entry": 6.969,
-    "high": 6.98,
-    "qty": 1304.902258782009,
-    "last_trade": 1781712098.4939232
+    "in_position": false,
+    "entry": null,
+    "high": null,
+    "qty": 0.0,
+    "last_trade": 1781724686.4840014
   },
   "LINKUSDT": {
     "in_position": false,
@@ -60,17 +60,17 @@
     "last_trade": 1781684161.6382298
   },
   "LTCUSDT": {
-    "in_position": true,
-    "entry": 45.73,
-    "high": 45.73,
-    "qty": 9.942995671825804,
-    "last_trade": 1781713898.5666258
+    "in_position": false,
+    "entry": null,
+    "high": null,
+    "qty": 0.0,
+    "last_trade": 1781724686.484008
   },
   "DOGEUSDT": {
-    "in_position": true,
-    "entry": 0.08742,
-    "high": 0.08752,
-    "qty": 260.0624525695462,
-    "last_trade": 1781713911.3446612
+    "in_position": false,
+    "entry": null,
+    "high": null,
+    "qty": 0.0,
+    "last_trade": 1781724686.484012
   }
 }
