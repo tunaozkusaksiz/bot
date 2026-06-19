@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "cash": 9044.624019328518,
+    "cash": 452.2312009664274,
     "peak_equity": 10390.48381505795
   },
   "BTCUSDT": {
@@ -60,11 +60,11 @@
     "last_trade": 1781838954.2204902
   },
   "LTCUSDT": {
-    "in_position": false,
-    "entry": null,
-    "high": null,
-    "qty": 0.0,
-    "last_trade": 1781838954.2204955
+    "in_position": true,
+    "entry": 44.0,
+    "high": 44.0,
+    "qty": 195.08656839438044,
+    "last_trade": 1781876764.251532
   },
   "DOGEUSDT": {
     "in_position": false,
