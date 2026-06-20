@@ -20,7 +20,7 @@
   "SOLUSDT": {
     "in_position": true,
     "entry": 72.21,
-    "high": 73.64,
+    "high": 73.77,
     "qty": 0.7383156192887524,
     "last_trade": 1781969482.460059
   },
@@ -48,7 +48,7 @@
   "AVAXUSDT": {
     "in_position": true,
     "entry": 6.133,
-    "high": 6.223,
+    "high": 6.234,
     "qty": 1297.9595886195734,
     "last_trade": 1781963171.7942169
   },
