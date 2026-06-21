@@ -20,7 +20,7 @@
   "SOLUSDT": {
     "in_position": true,
     "entry": 74.03,
-    "high": 74.38,
+    "high": 74.4,
     "qty": 104.3273913791868,
     "last_trade": 1782065770.8475988
   },
@@ -69,7 +69,7 @@
   "DOGEUSDT": {
     "in_position": true,
     "entry": 0.0834,
-    "high": 0.08359,
+    "high": 0.08364,
     "qty": 1178.498374156408,
     "last_trade": 1782064892.9536452
   }
