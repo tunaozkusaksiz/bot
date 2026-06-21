@@ -27,7 +27,7 @@
   "BNBUSDT": {
     "in_position": true,
     "entry": 587.87,
-    "high": 591.15,
+    "high": 591.52,
     "qty": 0.0913391988412258,
     "last_trade": 1782005492.9401453
   },
@@ -48,7 +48,7 @@
   "AVAXUSDT": {
     "in_position": true,
     "entry": 6.133,
-    "high": 6.272,
+    "high": 6.324,
     "qty": 1297.9595886195734,
     "last_trade": 1781963171.7942169
   },
@@ -62,7 +62,7 @@
   "LTCUSDT": {
     "in_position": true,
     "entry": 44.47,
-    "high": 44.83,
+    "high": 44.88,
     "qty": 22.99973244601819,
     "last_trade": 1782018970.872052
   },
