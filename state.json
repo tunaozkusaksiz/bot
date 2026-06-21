@@ -20,7 +20,7 @@
   "SOLUSDT": {
     "in_position": true,
     "entry": 73.11,
-    "high": 73.67,
+    "high": 73.82,
     "qty": 1.3920507517978726,
     "last_trade": 1782032511.0177944
   },
@@ -62,7 +62,7 @@
   "LTCUSDT": {
     "in_position": true,
     "entry": 44.47,
-    "high": 44.88,
+    "high": 44.89,
     "qty": 22.99973244601819,
     "last_trade": 1782018970.872052
   },
