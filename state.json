@@ -55,14 +55,14 @@
   "LINKUSDT": {
     "in_position": true,
     "entry": 7.962,
-    "high": 7.97,
+    "high": 7.991,
     "qty": 12.727934635943733,
     "last_trade": 1782054087.861761
   },
   "LTCUSDT": {
     "in_position": true,
     "entry": 44.47,
-    "high": 45.76,
+    "high": 45.94,
     "qty": 22.99973244601819,
     "last_trade": 1782018970.872052
   },
