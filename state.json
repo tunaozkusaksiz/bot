@@ -27,14 +27,14 @@
   "BNBUSDT": {
     "in_position": true,
     "entry": 597.21,
-    "high": 598.39,
+    "high": 598.43,
     "qty": 0.7315054410490003,
     "last_trade": 1782138694.3333676
   },
   "XRPUSDT": {
     "in_position": true,
     "entry": 1.1445,
-    "high": 1.1447,
+    "high": 1.1463,
     "qty": 19.085293335468446,
     "last_trade": 1782138708.6937315
   },
