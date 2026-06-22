@@ -13,14 +13,14 @@
   "ETHUSDT": {
     "in_position": true,
     "entry": 1735.54,
-    "high": 1738.11,
+    "high": 1746.33,
     "qty": 0.25000554074651454,
     "last_trade": 1782097300.1273024
   },
   "SOLUSDT": {
     "in_position": true,
     "entry": 73.75,
-    "high": 74.09,
+    "high": 74.29,
     "qty": 0.2941658414828523,
     "last_trade": 1782097325.4528317
   },
