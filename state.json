@@ -6,7 +6,7 @@
   "BTCUSDT": {
     "in_position": true,
     "entry": 64484.01,
-    "high": 65010.0,
+    "high": 65084.0,
     "qty": 0.13457432817444354,
     "last_trade": 1782096362.9887536
   },
@@ -20,7 +20,7 @@
   "SOLUSDT": {
     "in_position": true,
     "entry": 73.75,
-    "high": 74.32,
+    "high": 74.38,
     "qty": 0.2941658414828523,
     "last_trade": 1782097325.4528317
   },
