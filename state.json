@@ -20,7 +20,7 @@
   "SOLUSDT": {
     "in_position": true,
     "entry": 69.54,
-    "high": 69.54,
+    "high": 69.56,
     "qty": 119.70366575364707,
     "last_trade": 1782274565.632085
   },
@@ -41,7 +41,7 @@
   "ADAUSDT": {
     "in_position": true,
     "entry": 0.1524,
-    "high": 0.1524,
+    "high": 0.1525,
     "qty": 2647.079990635745,
     "last_trade": 1782270968.6518645
   },
