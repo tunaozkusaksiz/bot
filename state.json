@@ -13,14 +13,14 @@
   "ETHUSDT": {
     "in_position": true,
     "entry": 1582.77,
-    "high": 1582.77,
+    "high": 1583.2,
     "qty": 0.025208408773725113,
     "last_trade": 1782487887.006091
   },
   "SOLUSDT": {
     "in_position": true,
     "entry": 69.06,
-    "high": 71.71,
+    "high": 72.02,
     "qty": 113.62148180491138,
     "last_trade": 1782468096.9340606
   },
@@ -48,7 +48,7 @@
   "AVAXUSDT": {
     "in_position": true,
     "entry": 6.267,
-    "high": 6.311,
+    "high": 6.348,
     "qty": 127.33082225878037,
     "last_trade": 1782484301.5083985
   },
