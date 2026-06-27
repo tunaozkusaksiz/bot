@@ -34,14 +34,14 @@
   "XRPUSDT": {
     "in_position": true,
     "entry": 1.0423,
-    "high": 1.0515,
+    "high": 1.0585,
     "qty": 372.266076239388,
     "last_trade": 1782511319.8784335
   },
   "ADAUSDT": {
     "in_position": true,
     "entry": 0.1475,
-    "high": 0.1484,
+    "high": 0.1488,
     "qty": 386.38145818846726,
     "last_trade": 1782521170.5810366
   },
@@ -55,14 +55,14 @@
   "LINKUSDT": {
     "in_position": true,
     "entry": 7.315,
-    "high": 7.373,
+    "high": 7.394,
     "qty": 105.1355187494218,
     "last_trade": 1782506797.9451513
   },
   "LTCUSDT": {
     "in_position": true,
     "entry": 41.81,
-    "high": 42.05,
+    "high": 42.21,
     "qty": 0.9197157613633368,
     "last_trade": 1782506805.6608803
   },
