@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "cash": 8790.932457240859,
+    "cash": 1823.4157729388817,
     "peak_equity": 10390.48381505795
   },
   "BTCUSDT": {
@@ -46,11 +46,11 @@
     "last_trade": 1782742556.5052826
   },
   "AVAXUSDT": {
-    "in_position": false,
-    "entry": null,
-    "high": null,
-    "qty": 0.0,
-    "last_trade": 1782721891.623469
+    "in_position": true,
+    "entry": 6.557,
+    "high": 6.557,
+    "qty": 1061.5458484327899,
+    "last_trade": 1782745294.4848297
   },
   "LINKUSDT": {
     "in_position": false,
