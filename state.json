@@ -34,14 +34,14 @@
   "XRPUSDT": {
     "in_position": true,
     "entry": 1.0559,
-    "high": 1.0582,
+    "high": 1.0607,
     "qty": 358.908058673993,
     "last_trade": 1782955896.268075
   },
   "ADAUSDT": {
     "in_position": true,
     "entry": 0.1543,
-    "high": 0.155,
+    "high": 0.1551,
     "qty": 122.80331145621173,
     "last_trade": 1782955914.320442
   },
