@@ -41,7 +41,7 @@
   "ADAUSDT": {
     "in_position": true,
     "entry": 0.1543,
-    "high": 0.1557,
+    "high": 0.1558,
     "qty": 122.80331145621173,
     "last_trade": 1782955914.320442
   },
@@ -55,7 +55,7 @@
   "LINKUSDT": {
     "in_position": true,
     "entry": 7.397,
-    "high": 7.507,
+    "high": 7.521,
     "qty": 2.965664508175475,
     "last_trade": 1782949469.1745687
   },
