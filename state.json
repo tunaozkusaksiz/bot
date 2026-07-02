@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "cash": 7986.315582589954,
+    "cash": 0.9982894478237476,
     "peak_equity": 10390.48381505795
   },
   "BTCUSDT": {
@@ -25,25 +25,25 @@
     "last_trade": 1782952279.7780802
   },
   "BNBUSDT": {
-    "in_position": false,
-    "entry": null,
-    "high": null,
-    "qty": 0.0,
-    "last_trade": 1782888370.9186866
+    "in_position": true,
+    "entry": 550.68,
+    "high": 550.68,
+    "qty": 13.763747336161437,
+    "last_trade": 1782955885.4479115
   },
   "XRPUSDT": {
-    "in_position": false,
-    "entry": null,
-    "high": null,
-    "qty": 0.0,
-    "last_trade": 1782902766.0112157
+    "in_position": true,
+    "entry": 1.0559,
+    "high": 1.0559,
+    "qty": 358.908058673993,
+    "last_trade": 1782955896.268075
   },
   "ADAUSDT": {
-    "in_position": false,
-    "entry": null,
-    "high": null,
-    "qty": 0.0,
-    "last_trade": 1782934295.0981636
+    "in_position": true,
+    "entry": 0.1543,
+    "high": 0.1543,
+    "qty": 122.80331145621173,
+    "last_trade": 1782955914.320442
   },
   "AVAXUSDT": {
     "in_position": false,
@@ -55,7 +55,7 @@
   "LINKUSDT": {
     "in_position": true,
     "entry": 7.397,
-    "high": 7.397,
+    "high": 7.417,
     "qty": 2.965664508175475,
     "last_trade": 1782949469.1745687
   },
