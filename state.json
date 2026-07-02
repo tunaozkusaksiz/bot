@@ -34,7 +34,7 @@
   "XRPUSDT": {
     "in_position": true,
     "entry": 1.0559,
-    "high": 1.0575,
+    "high": 1.0582,
     "qty": 358.908058673993,
     "last_trade": 1782955896.268075
   },
@@ -62,7 +62,7 @@
   "LTCUSDT": {
     "in_position": true,
     "entry": 42.79,
-    "high": 42.9,
+    "high": 42.91,
     "qty": 16.952345738013346,
     "last_trade": 1782949587.8293548
   },
