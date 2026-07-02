@@ -6,14 +6,14 @@
   "BTCUSDT": {
     "in_position": true,
     "entry": 60341.51,
-    "high": 61703.99,
+    "high": 61860.01,
     "qty": 0.11324066526799244,
     "last_trade": 1782980188.955797
   },
   "ETHUSDT": {
     "in_position": true,
     "entry": 1619.51,
-    "high": 1681.13,
+    "high": 1706.26,
     "qty": 0.21096235082448467,
     "last_trade": 1782981090.903622
   },
@@ -34,7 +34,7 @@
   "XRPUSDT": {
     "in_position": true,
     "entry": 1.0559,
-    "high": 1.0973,
+    "high": 1.1085,
     "qty": 358.908058673993,
     "last_trade": 1782955896.268075
   },
