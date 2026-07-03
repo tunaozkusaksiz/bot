@@ -34,7 +34,7 @@
   "XRPUSDT": {
     "in_position": true,
     "entry": 1.0828,
-    "high": 1.1259,
+    "high": 1.127,
     "qty": 399.1351369200682,
     "last_trade": 1783033293.2381504
   },
@@ -55,7 +55,7 @@
   "LINKUSDT": {
     "in_position": true,
     "entry": 7.824,
-    "high": 7.904,
+    "high": 7.908,
     "qty": 83.82827655576673,
     "last_trade": 1783095374.8334363
   },
