@@ -6,7 +6,7 @@
   "BTCUSDT": {
     "in_position": true,
     "entry": 61531.29,
-    "high": 62207.28,
+    "high": 62214.42,
     "qty": 0.005711041710962908,
     "last_trade": 1783049486.874724
   },
@@ -27,7 +27,7 @@
   "BNBUSDT": {
     "in_position": true,
     "entry": 559.76,
-    "high": 567.12,
+    "high": 567.66,
     "qty": 11.216452575198344,
     "last_trade": 1783048567.1237705
   },
@@ -55,7 +55,7 @@
   "LINKUSDT": {
     "in_position": true,
     "entry": 7.824,
-    "high": 7.859,
+    "high": 7.873,
     "qty": 83.82827655576673,
     "last_trade": 1783095374.8334363
   },
