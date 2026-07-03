@@ -6,7 +6,7 @@
   "BTCUSDT": {
     "in_position": true,
     "entry": 61531.29,
-    "high": 61751.19,
+    "high": 61794.48,
     "qty": 0.005711041710962908,
     "last_trade": 1783049486.874724
   },
@@ -69,7 +69,7 @@
   "DOGEUSDT": {
     "in_position": true,
     "entry": 0.07417,
-    "high": 0.07522,
+    "high": 0.07534,
     "qty": 13272.560184327416,
     "last_trade": 1783022506.590386
   }
