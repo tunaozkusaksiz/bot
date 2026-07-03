@@ -34,7 +34,7 @@
   "XRPUSDT": {
     "in_position": true,
     "entry": 1.0828,
-    "high": 1.0874,
+    "high": 1.0882,
     "qty": 399.1351369200682,
     "last_trade": 1783033293.2381504
   },
@@ -48,7 +48,7 @@
   "AVAXUSDT": {
     "in_position": true,
     "entry": 6.786,
-    "high": 6.808,
+    "high": 6.812,
     "qty": 98.99162345529696,
     "last_trade": 1783029698.2720473
   },
