@@ -34,7 +34,7 @@
   "XRPUSDT": {
     "in_position": true,
     "entry": 1.0828,
-    "high": 1.1098,
+    "high": 1.111,
     "qty": 399.1351369200682,
     "last_trade": 1783033293.2381504
   },
@@ -69,7 +69,7 @@
   "DOGEUSDT": {
     "in_position": true,
     "entry": 0.07417,
-    "high": 0.07562,
+    "high": 0.07571,
     "qty": 13272.560184327416,
     "last_trade": 1783022506.590386
   }
