@@ -1,14 +1,14 @@
 {
   "_meta": {
-    "cash": 370.2728120874466,
+    "cash": 18.513640604372426,
     "peak_equity": 10390.48381505795
   },
   "BTCUSDT": {
-    "in_position": false,
-    "entry": null,
-    "high": null,
-    "qty": 0.0,
-    "last_trade": 1783024289.5540664
+    "in_position": true,
+    "entry": 61531.29,
+    "high": 61531.29,
+    "qty": 0.005711041710962908,
+    "last_trade": 1783049486.874724
   },
   "ETHUSDT": {
     "in_position": false,
@@ -27,7 +27,7 @@
   "BNBUSDT": {
     "in_position": true,
     "entry": 559.76,
-    "high": 559.76,
+    "high": 561.56,
     "qty": 11.216452575198344,
     "last_trade": 1783048567.1237705
   },
@@ -48,7 +48,7 @@
   "AVAXUSDT": {
     "in_position": true,
     "entry": 6.786,
-    "high": 6.857,
+    "high": 6.871,
     "qty": 98.99162345529696,
     "last_trade": 1783029698.2720473
   },
