@@ -27,7 +27,7 @@
   "BNBUSDT": {
     "in_position": true,
     "entry": 572.24,
-    "high": 574.59,
+    "high": 574.8,
     "qty": 12.691573332906803,
     "last_trade": 1783163777.4980783
   },
@@ -62,7 +62,7 @@
   "LTCUSDT": {
     "in_position": true,
     "entry": 44.52,
-    "high": 44.6,
+    "high": 44.63,
     "qty": 0.40782939824924674,
     "last_trade": 1783168295.8574233
   },
