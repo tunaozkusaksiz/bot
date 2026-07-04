@@ -13,7 +13,7 @@
   "ETHUSDT": {
     "in_position": true,
     "entry": 1755.86,
-    "high": 1766.56,
+    "high": 1768.58,
     "qty": 0.36709271860952175,
     "last_trade": 1783144906.0393767
   },
@@ -27,14 +27,14 @@
   "BNBUSDT": {
     "in_position": true,
     "entry": 572.24,
-    "high": 573.62,
+    "high": 573.65,
     "qty": 12.691573332906803,
     "last_trade": 1783163777.4980783
   },
   "XRPUSDT": {
     "in_position": true,
     "entry": 1.0828,
-    "high": 1.1549,
+    "high": 1.1572,
     "qty": 399.1351369200682,
     "last_trade": 1783033293.2381504
   },
