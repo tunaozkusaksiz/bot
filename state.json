@@ -6,7 +6,7 @@
   "BTCUSDT": {
     "in_position": true,
     "entry": 62569.02,
-    "high": 62947.78,
+    "high": 63026.0,
     "qty": 0.005803691606503176,
     "last_trade": 1783167378.1731548
   },
@@ -62,7 +62,7 @@
   "LTCUSDT": {
     "in_position": true,
     "entry": 44.52,
-    "high": 45.4,
+    "high": 45.47,
     "qty": 0.40782939824924674,
     "last_trade": 1783168295.8574233
   },
