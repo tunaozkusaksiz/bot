@@ -13,7 +13,7 @@
   "ETHUSDT": {
     "in_position": true,
     "entry": 1774.24,
-    "high": 1791.45,
+    "high": 1805.0,
     "qty": 0.011127128267714177,
     "last_trade": 1783270901.5661683
   },
@@ -27,7 +27,7 @@
   "BNBUSDT": {
     "in_position": true,
     "entry": 575.93,
-    "high": 590.56,
+    "high": 593.03,
     "qty": 14.29955633863092,
     "last_trade": 1783239372.0186274
   },
@@ -55,7 +55,7 @@
   "LINKUSDT": {
     "in_position": true,
     "entry": 7.984,
-    "high": 8.076,
+    "high": 8.145,
     "qty": 2.571055439391069,
     "last_trade": 1783286183.820179
   },
@@ -69,7 +69,7 @@
   "DOGEUSDT": {
     "in_position": true,
     "entry": 0.07706,
-    "high": 0.07792,
+    "high": 0.0787,
     "qty": 5123.850521076862,
     "last_trade": 1783269993.6609733
   }
