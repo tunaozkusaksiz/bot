@@ -20,14 +20,14 @@
   "SOLUSDT": {
     "in_position": true,
     "entry": 81.96,
-    "high": 82.56,
+    "high": 82.69,
     "qty": 99.41442371409107,
     "last_trade": 1783438327.099901
   },
   "BNBUSDT": {
     "in_position": true,
     "entry": 584.51,
-    "high": 585.99,
+    "high": 586.09,
     "qty": 0.6969945909913374,
     "last_trade": 1783439178.4250996
   },
