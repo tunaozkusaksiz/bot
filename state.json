@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "cash": 7937.658598090064,
+    "cash": 396.88292990450464,
     "peak_equity": 10390.48381505795
   },
   "BTCUSDT": {
@@ -18,11 +18,11 @@
     "last_trade": 1783636319.1196265
   },
   "SOLUSDT": {
-    "in_position": false,
-    "entry": null,
-    "high": null,
-    "qty": 0.0,
-    "last_trade": 1783612894.7897208
+    "in_position": true,
+    "entry": 77.98,
+    "high": 77.98,
+    "qty": 96.60480156142344,
+    "last_trade": 1783639936.4144323
   },
   "BNBUSDT": {
     "in_position": false,
