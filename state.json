@@ -20,21 +20,21 @@
   "SOLUSDT": {
     "in_position": true,
     "entry": 77.89,
-    "high": 77.89,
+    "high": 78.39,
     "qty": 97.02450895241495,
     "last_trade": 1783558916.369147
   },
   "BNBUSDT": {
     "in_position": true,
     "entry": 569.22,
-    "high": 569.22,
+    "high": 571.06,
     "qty": 0.6638240928203163,
     "last_trade": 1783558927.2562048
   },
   "XRPUSDT": {
     "in_position": true,
     "entry": 1.09,
-    "high": 1.0924,
+    "high": 1.0944,
     "qty": 18.352885199330206,
     "last_trade": 1783547207.4653037
   },
@@ -48,7 +48,7 @@
   "AVAXUSDT": {
     "in_position": true,
     "entry": 6.464,
-    "high": 6.479,
+    "high": 6.52,
     "qty": 61.8955596140776,
     "last_trade": 1783546994.797057
   },
@@ -62,7 +62,7 @@
   "LTCUSDT": {
     "in_position": true,
     "entry": 43.7,
-    "high": 43.7,
+    "high": 43.97,
     "qty": 0.4323363273629079,
     "last_trade": 1783558938.880234
   },
