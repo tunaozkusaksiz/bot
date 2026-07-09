@@ -6,7 +6,7 @@
   "BTCUSDT": {
     "in_position": true,
     "entry": 62364.96,
-    "high": 63187.93,
+    "high": 63364.95,
     "qty": 0.006021035177750866,
     "last_trade": 1783575976.8233027
   },
@@ -27,7 +27,7 @@
   "BNBUSDT": {
     "in_position": true,
     "entry": 571.11,
-    "high": 572.37,
+    "high": 572.89,
     "qty": 0.0340011014519557,
     "last_trade": 1783612907.7649899
   },
@@ -48,14 +48,14 @@
   "AVAXUSDT": {
     "in_position": true,
     "entry": 6.707,
-    "high": 6.751,
+    "high": 6.761,
     "qty": 55.58511460886379,
     "last_trade": 1783617376.166229
   },
   "LINKUSDT": {
     "in_position": true,
     "entry": 7.682,
-    "high": 7.767,
+    "high": 7.797,
     "qty": 977.6142098907164,
     "last_trade": 1783573314.739592
   },
