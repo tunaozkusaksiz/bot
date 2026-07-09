@@ -6,7 +6,7 @@
   "BTCUSDT": {
     "in_position": true,
     "entry": 62364.96,
-    "high": 63132.0,
+    "high": 63187.93,
     "qty": 0.006021035177750866,
     "last_trade": 1783575976.8233027
   },
@@ -48,7 +48,7 @@
   "AVAXUSDT": {
     "in_position": true,
     "entry": 6.707,
-    "high": 6.745,
+    "high": 6.751,
     "qty": 55.58511460886379,
     "last_trade": 1783617376.166229
   },
