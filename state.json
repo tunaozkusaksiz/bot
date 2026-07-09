@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "cash": 1.0366264327749661,
+    "cash": 20.6714802324565,
     "peak_equity": 10390.48381505795
   },
   "BTCUSDT": {
@@ -34,7 +34,7 @@
   "XRPUSDT": {
     "in_position": true,
     "entry": 1.0931,
-    "high": 1.0931,
+    "high": 1.0935,
     "qty": 360.0077942864814,
     "last_trade": 1783598530.0836227
   },
@@ -67,10 +67,10 @@
     "last_trade": 1783587781.2057207
   },
   "DOGEUSDT": {
-    "in_position": true,
-    "entry": 0.07248,
-    "high": 0.07248,
-    "qty": 271.4711092263746,
-    "last_trade": 1783598547.2481241
+    "in_position": false,
+    "entry": null,
+    "high": null,
+    "qty": 0.0,
+    "last_trade": 1783599679.5711675
   }
 }
