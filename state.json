@@ -48,21 +48,21 @@
   "AVAXUSDT": {
     "in_position": true,
     "entry": 6.707,
-    "high": 6.762,
+    "high": 6.767,
     "qty": 55.58511460886379,
     "last_trade": 1783617376.166229
   },
   "LINKUSDT": {
     "in_position": true,
     "entry": 7.682,
-    "high": 7.797,
+    "high": 7.802,
     "qty": 977.6142098907164,
     "last_trade": 1783573314.739592
   },
   "LTCUSDT": {
     "in_position": true,
     "entry": 43.93,
-    "high": 44.23,
+    "high": 44.26,
     "qty": 0.4248847243557034,
     "last_trade": 1783587781.2057207
   },
