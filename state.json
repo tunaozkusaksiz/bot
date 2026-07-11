@@ -55,7 +55,7 @@
   "LINKUSDT": {
     "in_position": true,
     "entry": 7.968,
-    "high": 7.997,
+    "high": 8.0,
     "qty": 174.7792421453129,
     "last_trade": 1783731806.9120731
   },
@@ -69,7 +69,7 @@
   "DOGEUSDT": {
     "in_position": true,
     "entry": 0.07414,
-    "high": 0.07431,
+    "high": 0.07435,
     "qty": 939.196790810532,
     "last_trade": 1783731818.3912957
   }
