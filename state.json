@@ -6,21 +6,21 @@
   "BTCUSDT": {
     "in_position": true,
     "entry": 64129.17,
-    "high": 64419.24,
+    "high": 64459.88,
     "qty": 0.0005978187432823746,
     "last_trade": 1783723588.0100517
   },
   "ETHUSDT": {
     "in_position": true,
     "entry": 1789.95,
-    "high": 1813.94,
+    "high": 1819.74,
     "qty": 3.803659231576127,
     "last_trade": 1783696600.2649896
   },
   "SOLUSDT": {
     "in_position": true,
     "entry": 78.18,
-    "high": 78.56,
+    "high": 78.61,
     "qty": 0.29788845355554017,
     "last_trade": 1783778505.282258
   },
@@ -55,7 +55,7 @@
   "LINKUSDT": {
     "in_position": true,
     "entry": 7.968,
-    "high": 8.067,
+    "high": 8.074,
     "qty": 174.7792421453129,
     "last_trade": 1783731806.9120731
   },
@@ -69,7 +69,7 @@
   "DOGEUSDT": {
     "in_position": true,
     "entry": 0.07414,
-    "high": 0.07526,
+    "high": 0.07536,
     "qty": 939.196790810532,
     "last_trade": 1783731818.3912957
   }
