@@ -62,14 +62,14 @@
   "LTCUSDT": {
     "in_position": true,
     "entry": 44.54,
-    "high": 44.94,
+    "high": 44.98,
     "qty": 0.4647730480256716,
     "last_trade": 1783688534.8076458
   },
   "DOGEUSDT": {
     "in_position": true,
     "entry": 0.07414,
-    "high": 0.07443,
+    "high": 0.07444,
     "qty": 939.196790810532,
     "last_trade": 1783731818.3912957
   }
