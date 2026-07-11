@@ -27,14 +27,14 @@
   "BNBUSDT": {
     "in_position": true,
     "entry": 579.4,
-    "high": 581.05,
+    "high": 581.38,
     "qty": 0.06473403725504037,
     "last_trade": 1783784790.733803
   },
   "XRPUSDT": {
     "in_position": true,
     "entry": 1.1128,
-    "high": 1.1177,
+    "high": 1.1186,
     "qty": 21.423272755210352,
     "last_trade": 1783788390.027348
   },
@@ -69,7 +69,7 @@
   "DOGEUSDT": {
     "in_position": true,
     "entry": 0.07414,
-    "high": 0.07542,
+    "high": 0.07546,
     "qty": 939.196790810532,
     "last_trade": 1783731818.3912957
   }
